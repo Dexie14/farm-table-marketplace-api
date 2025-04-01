@@ -43,7 +43,7 @@ const register = asyncHandler(async (req: Request, res: Response): Promise<any> 
     const { email, password, firstName, lastName, role }: RegisterRequestInput = req.body;
 
     if (!email || !password || !firstName || !lastName || !role) {
-        throw new AppError("Please input required fields", 400);
+        throw new AppError("Please input all required fields", 400);
     }
 
     // Validate role

@@ -23,3 +23,13 @@ export const authMiddleware = asyncHandler(async (req: ProtectedRequest, res: Re
     req.user = userWithoutPassword as User;
     next();
 });
+
+
+export const authorizeRoles = (...roles: string[]) => {
+  return (req: ProtectedRequest, res: Response, next: NextFunction) => {
+    if (!roles.includes(req.user!.role)) {
+      return res.status(403).json({ error: 'Access denied' });
+    }
+    next();
+  };
+};
