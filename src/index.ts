@@ -1,5 +1,7 @@
-import express, { Express, Request, Response } from "express";
+import express, { Express, NextFunction, Request, Response } from "express";
 import dotenv from "dotenv";
+import AppError from "./errors/AppError";
+import { errorHandler } from "./middlewares/errorHandler";
 dotenv.config();
 const app: Express = express();
 
@@ -11,6 +13,13 @@ app.use(express.json());
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
 });
+
+app.use((req: Request, res: Response, next: NextFunction): any => {
+  throw new AppError(`Route ${req.path} not found`, 404)
+})
+
+app.use(errorHandler)
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
