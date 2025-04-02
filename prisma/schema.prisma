@@ -25,30 +25,43 @@ model User {
   lastName  String
   password  String
   role      UserRole
+  farms     Farm[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
-  Farm      Farm[]
 }
 
 model Farm {
   id          Int       @id @default(autoincrement())
-  name        String
+  farmName    String    @unique
   description String?
-  owner       User      @relation(fields: [ownerId], references: [id])
-  ownerId     Int
+  location    String?
+  farmerId    Int
+  farmer      User      @relation(fields: [farmerId], references: [id])
   products    Product[]
+  reviews     Review[]
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  updatedAt   DateTime  @default(now()) @updatedAt
 }
 
 model Product {
   id          Int      @id @default(autoincrement())
-  name        String
+  productName String
   description String?
   price       Decimal  @db.Decimal(10, 2)
   quantity    Int
   farm        Farm     @relation(fields: [farmId], references: [id])
   farmId      Int
+  reviews     Review[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  comment   String
+  rating    Int
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  farmId    Int?
+  farm      Farm?   @relation(fields: [farmId], references: [id])
 }

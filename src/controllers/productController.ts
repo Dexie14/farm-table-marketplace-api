@@ -5,7 +5,7 @@ import { ProtectedRequest } from '../utils/types';
 const prisma = new PrismaClient();
  const createProduct = async (req: ProtectedRequest, res: Response): Promise<void> => {
     try {
-        const { name, description, price, quantity, farmId } = req.body;
+        const { productName, description, price, quantity, farmId } = req.body;
         const ownerId = req.user?.id;
 
         // Verify farm ownership
@@ -23,7 +23,7 @@ const prisma = new PrismaClient();
 
         const product = await prisma.product.create({
             data: {
-                name,
+                productName,
                 description,
                 price: parseFloat(price),
                 quantity: Number(quantity),
@@ -49,7 +49,7 @@ const prisma = new PrismaClient();
         const whereCondition: any = {
             ...(search && {
                 OR: [
-                    { name: { contains: search as string } },
+                    { productName: { contains: search as string } },
                     { description: { contains: search as string } },
                 ],
             }),
@@ -64,7 +64,7 @@ const prisma = new PrismaClient();
                 farm: {
                     select: {
                         id: true,
-                        name: true,
+                        productName: true,
                     },
                 },
             },
@@ -100,7 +100,7 @@ const prisma = new PrismaClient();
                 farm: {
                     select: {
                         id: true,
-                        name: true,
+                        productName: true,
                         owner: {
                             select: {
                                 id: true,
@@ -126,7 +126,7 @@ const prisma = new PrismaClient();
  const updateProduct = async (req: ProtectedRequest, res: Response): Promise<void> => {
     try {
         const { productId } = req.params;
-        const { name, description, price, quantity } = req.body;
+        const { productName, description, price, quantity } = req.body;
         const ownerId = req.user!.id;
 
         // Verify product ownership
@@ -143,7 +143,7 @@ const prisma = new PrismaClient();
         const updatedProduct = await prisma.product.update({
             where: { id: Number(productId) },
             data: {
-                name,
+                productName,
                 description,
                 price: price ? parseFloat(price) : undefined,
                 quantity: quantity ? Number(quantity) : undefined,
