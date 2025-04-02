@@ -31,33 +31,37 @@ model User {
 }
 
 model Farm {
-  id            Int       @id @default(autoincrement())
-  farmName      String    @unique
-  description   String?
-  location      String?
-  farmerId      Int
-  farmer        User      @relation(fields: [farmerId], references: [id])
-  products      Product[]
-  reviews       Review[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @default(now()) @updatedAt
-}
-
-model Product{
   id          Int       @id @default(autoincrement())
-  productName String
-  price       Float
-  farmId      Int
-  farm        Farm      @relation(fields: [farmId], references: [id])
+  farmName    String    @unique
+  description String?
+  location    String?
+  farmerId    Int
+  farmer      User      @relation(fields: [farmerId], references: [id])
+  products    Product[]
   reviews     Review[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @default(now()) @updatedAt
 }
 
-model Review{
-  id          Int     @id @default(autoincrement())
-  comment     String
-  rating      Int
-  productId   Int
-  product     Product   @relation(fields: [productId], references: [id])
-  farmId      Int?
-  farm        Farm?    @relation(fields: [farmId], references: [id])
+model Product {
+  id          Int      @id @default(autoincrement())
+  productName String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  quantity    Int
+  farm        Farm     @relation(fields: [farmId], references: [id])
+  farmId      Int
+  reviews     Review[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id        Int     @id @default(autoincrement())
+  comment   String
+  rating    Int
+  productId Int
+  product   Product @relation(fields: [productId], references: [id])
+  farmId    Int?
+  farm      Farm?   @relation(fields: [farmId], references: [id])
 }

@@ -9,7 +9,11 @@ const prisma = new PrismaClient();
 //get all farms
 export const getAllFarms:RequestHandler = async(req, res, next) => {
     try {
-        const farms = await prisma.farm.findMany(); //uses prisma to fetch all the records from the farm table
+        const farms = await prisma.farm.findMany({
+            include: {
+                farmer: true, 
+            },
+        }); // Uses prisma to fetch all the records from the farm table
         res.status(200).json(farms);
     } catch (error) {
         console.error("Error fetching farms: ", error);
@@ -41,7 +45,7 @@ export const getFarmById:RequestHandler = async(req, res, next) => {
 //create a new farm -- only farmers can
 export const createFarm: RequestHandler = async(req, res, next)=> {
     try{
-        const {name, description, location} = req.body;
+        const {farmName, description, location} = req.body;
         //extract user info from the authentication middleware
         const farmerId = (req as any).user.id;
         
@@ -57,7 +61,7 @@ export const createFarm: RequestHandler = async(req, res, next)=> {
         //create the farm record
         const farm = await prisma.farm.create({
             data: {
-                name,
+                farmName,
                 description,
                 location,
                 farmerId: Number(farmerId), // Convert to number if your foreign key is numeric
@@ -97,7 +101,7 @@ export const deleteFarm: RequestHandler = async(req, res, next) => {
         }
 
         // Check if the farm belongs to this farmer
-        if (farm.farmerId !== farmerId) {
+        if (farm?.farmerId !== farmerId) {
             res.status(403).json({error: "You can only delete your own farms"});
         }
 

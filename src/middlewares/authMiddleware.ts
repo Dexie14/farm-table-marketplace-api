@@ -29,17 +29,16 @@ export const authMiddleware = asyncHandler(async (req: ProtectedRequest, res: Re
 });
 
 export const authorizeRoles = (...roles: string[]) => {
-    return (req: ProtectedRequest, res: Response, next: NextFunction): void => {
-       if (!req.user) {
-        res.status(401).json({ error: 'Authentication required' });
-        return;
-      }
-     
-      if (!roles.includes(req.user!.role)) {
-        res.status(403).json({ error: 'Access denied' });
-        return;
-      }
-      
-      next();
-    };
-  };
+  return (req: ProtectedRequest, res: Response, next: NextFunction): void => {
+     if (!req.user) {
+      res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
+   
+    if (!roles.includes(req.user!.role)) {
+      res.status(403).json({ error: 'Access denied' });
+      return;
+    }
+    
+    next();
+  }};
