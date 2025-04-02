@@ -16,5 +16,20 @@ router.post('/product',
 // Get all products with filtering and pagination
 router.get('/product', productController.getAllProducts);
 
+router.get('/product/:productId', productController.getProductById);
+
+// Update product details (only farm owner)
+router.put('/product/:productId',
+  authorizeRoles('FARMER'), 
+  productController.updateProduct
+);
+
+// Delete product (only farm owner)
+router.delete('/product/:productId', 
+  authorizeRoles('FARMER'), 
+  productController.deleteProduct
+);
+
+
 
 export default router;

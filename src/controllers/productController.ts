@@ -12,7 +12,7 @@ const prisma = new PrismaClient();
         const farm = await prisma.farm.findUnique({
             where: {
                 id: Number(farmId),
-                ownerId: ownerId,
+                farmerId: ownerId,
             },
         });
 
@@ -64,7 +64,7 @@ const prisma = new PrismaClient();
                 farm: {
                     select: {
                         id: true,
-                        productName: true,
+                        farmName: true,
                     },
                 },
             },
@@ -100,8 +100,8 @@ const prisma = new PrismaClient();
                 farm: {
                     select: {
                         id: true,
-                        productName: true,
-                        owner: {
+                        farmName: true,
+                        farmer: {
                             select: {
                                 id: true,
                                 firstName: true,
@@ -135,7 +135,7 @@ const prisma = new PrismaClient();
             include: { farm: true },
         });
 
-        if (!existingProduct || existingProduct.farm.ownerId !== ownerId) {
+        if (!existingProduct || existingProduct.farm.farmerId !== ownerId) {
             res.status(403).json({ error: 'Not authorized to update this product' });
             return;
         }
@@ -170,7 +170,12 @@ const prisma = new PrismaClient();
             include: { farm: true },
         });
 
-        if (!existingProduct || existingProduct.farm.ownerId !== ownerId) {
+        if (!existingProduct) {
+            res.status(404).json({ error: 'Product not found' });
+            return;
+        }
+
+        if (existingProduct.farm.farmerId !== ownerId) {
             res.status(403).json({ error: 'Not authorized to delete this product' });
             return;
         }
