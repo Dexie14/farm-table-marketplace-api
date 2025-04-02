@@ -27,4 +27,28 @@ model User {
   role      UserRole
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+  Farm      Farm[]
+}
+
+model Farm {
+  id          Int       @id @default(autoincrement())
+  name        String
+  description String?
+  owner       User      @relation(fields: [ownerId], references: [id])
+  ownerId     Int
+  products    Product[]
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Product {
+  id          Int      @id @default(autoincrement())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  quantity    Int
+  farm        Farm     @relation(fields: [farmId], references: [id])
+  farmId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
