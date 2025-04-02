@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import AppError from "./errors/AppError";
 import authRoutes from "./routes/auth"
 import { errorHandler } from "./middlewares/errorHandler";
+import farmRoutes from './routes/farmRoutes';
 dotenv.config();
 const app: Express = express();
 
@@ -10,6 +11,7 @@ const port = process.env.APP_PORT || 4000;
 
 
 app.use(express.json());
+app.use('/api/farms', farmRoutes);
 
 app.get("/", (req: Request, res: Response) => {
   res.send("Express + TypeScript Server");
