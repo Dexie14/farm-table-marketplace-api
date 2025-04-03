@@ -18,6 +18,14 @@ enum UserRole {
   BUYER
 }
 
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
 model User {
   id        Int      @id @default(autoincrement())
   email     String   @unique
@@ -26,6 +34,7 @@ model User {
   password  String
   role      UserRole
   farms     Farm[]
+  orders    Order[]
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
@@ -44,16 +53,17 @@ model Farm {
 }
 
 model Product {
-  id          Int      @id @default(autoincrement())
+  id          Int         @id @default(autoincrement())
   productName String
   description String?
-  price       Decimal  @db.Decimal(10, 2)
+  price       Decimal     @db.Decimal(10, 2)
   quantity    Int
-  farm        Farm     @relation(fields: [farmId], references: [id])
+  farm        Farm        @relation(fields: [farmId], references: [id])
   farmId      Int
   reviews     Review[]
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  OrderItem   OrderItem[]
 }
 
 model Review {
@@ -64,4 +74,25 @@ model Review {
   product   Product @relation(fields: [productId], references: [id])
   farmId    Int?
   farm      Farm?   @relation(fields: [farmId], references: [id])
+}
+
+model Order {
+  id        Int         @id @default(autoincrement())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    Int
+  status    OrderStatus @default(PENDING)
+  total     Decimal     @db.Decimal(10, 2)
+  items     OrderItem[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+model OrderItem {
+  id        Int     @id @default(autoincrement())
+  order     Order   @relation(fields: [orderId], references: [id])
+  orderId   Int
+  product   Product @relation(fields: [productId], references: [id])
+  productId Int
+  quantity  Int
+  price     Decimal @db.Decimal(10, 2)
 }
