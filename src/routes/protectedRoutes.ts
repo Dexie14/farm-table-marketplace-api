@@ -1,6 +1,8 @@
 import { Request, Response, Router } from "express"
 import productController from "../controllers/productController";
 import { authorizeRoles } from "../middlewares/authMiddleware";
+import orderController from "../controllers/orderController";
+
 
 
 
@@ -28,6 +30,34 @@ router.put('/product/:productId',
 router.delete('/product/:productId', 
   authorizeRoles('FARMER'), 
   productController.deleteProduct
+);
+
+
+
+// Order routes
+
+router.post('/order', 
+   
+  orderController.createOrder
+);
+
+// Get user's orders
+router.get('/order', 
+   
+  orderController.getUserOrders
+);
+
+// Get specific order details
+router.get('/order/:orderId', 
+   
+  orderController.getOrderById
+);
+
+// Update order status (for farmers)
+router.patch('/order/:orderId/status', 
+   
+  authorizeRoles('FARMER'), 
+  orderController.updateOrderStatus
 );
 
 
